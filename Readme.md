@@ -55,5 +55,5 @@ including the Berne Convention.
 
 =====================================================
               (C) 2011 Cupz1d. All Rights Reserved.
-              Contact: [your e-mail / ICQ / Skype]
+              Contact: [cupz1d@icloud.com / +79773288020 / t.me/cupz1dinfo
 =====================================================
