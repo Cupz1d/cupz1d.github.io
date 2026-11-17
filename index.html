@@ -1,0 +1,1759 @@
+<!--
+=====================================================
+             COPYRIGHT INFORMATION
+=====================================================
+
+Copyright (C) 2011 Cupz1d. All rights reserved.
+
+The nickname, logo "Cupz1d" and all products, programs,
+materials, graphics, source codes and related files
+(hereinafter referred to as "the Products") are the
+intellectual property of their author, Cupz1d, and are
+protected by copyright law and international treaties,
+including the Berne Convention.
+
+1. The nickname "Cupz1d" is a registered pseudonym of the
+   author. Any use of this nickname by third parties for
+   impersonation or misattribution of authorship is
+   PROHIBITED.
+
+2. Free non-commercial use of the Products for personal
+   purposes is permitted, provided this notice is kept
+   intact and unchanged.
+
+3. Without the author's written permission it is forbidden:
+- to distribute the Products for a fee;
+  - to modify, decompile or alter the Products;
+  - to remove or alter this copyright notice;
+  - to claim the Products as one's own work.
+
+4. THE PRODUCTS ARE PROVIDED "AS IS" WITHOUT WARRANTY OF
+   ANY KIND. THE AUTHOR SHALL NOT BE LIABLE FOR ANY
+   DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
+   THE PRODUCTS.
+
+5. All trademarks mentioned in the Products belong to
+   their respective owners.
+
+=====================================================
+              (C) 2011 Cupz1d. All Rights Reserved.
+              Contact: [cupz1d@icloud.com / +79773288020 / t.me/cupz1dinfo
+=====================================================
+-->
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cupz1d macOS — Рабочий стол & Портфолио</title>
+    <!-- Подключение Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Шрифты Inter и JetBrains Mono для эстетики macOS и кода -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        bgBase: '#050811',
+                        macWindow: 'rgba(13, 18, 30, 0.78)',
+                        macCard: 'rgba(17, 25, 42, 0.68)',
+                        accentCyan: '#38bdf8',
+                        accentIndigo: '#818cf8',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        /* Разрешаем выделение текста внутри контента и кода */
+        .selectable-text, pre, code, textarea, input {
+            user-select: text;
+        }
+
+        body {
+            background-color: #03050a;
+            color: #e2e8f0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+        }
+
+        /* Обои рабочего стола macOS: Разбитый экран / поврежденная матрица */
+        .macos-wallpaper {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(320px circle at 74% 34%, rgba(255, 255, 255, 0.14), rgba(56, 189, 248, 0.18) 28%, rgba(244, 63, 94, 0.12) 50%, transparent 72%),
+                radial-gradient(260px circle at 24% 68%, rgba(255, 255, 255, 0.1), rgba(168, 85, 247, 0.16) 34%, transparent 68%),
+                linear-gradient(135deg, #020307 0%, #070b14 48%, #04060c 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Полосы битых пикселей LCD матрицы */
+        .lcd-damage-lines {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 3;
+            background:
+                linear-gradient(90deg,
+                    transparent 23.8%,
+                    rgba(244, 63, 94, 0.35) 23.9%,
+                    rgba(56, 189, 248, 0.45) 24.0%,
+                    transparent 24.15%,
+                    transparent 73.6%,
+                    rgba(34, 211, 238, 0.55) 73.7%,
+                    rgba(255, 255, 255, 0.7) 73.78%,
+                    rgba(168, 85, 247, 0.5) 73.9%,
+                    transparent 74.05%,
+                    transparent 74.4%,
+                    rgba(16, 185, 129, 0.35) 74.45%,
+                    transparent 74.55%
+                ),
+                linear-gradient(180deg,
+                    transparent 33.7%,
+                    rgba(56, 189, 248, 0.4) 33.8%,
+                    rgba(255, 255, 255, 0.65) 33.88%,
+                    transparent 34.0%,
+                    transparent 67.9%,
+                    rgba(244, 63, 94, 0.32) 68.0%,
+                    transparent 68.12%
+                );
+            mix-blend-mode: screen;
+            opacity: 0.75;
+        }
+
+        /* SVG слой трещин стекла */
+        .cracked-glass-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 4;
+            filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 8px rgba(56, 189, 248, 0.22));
+        }
+
+        /* Холст с падающим бинарным кодом 011001010 под трещинами */
+        #binary-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+            pointer-events: none;
+        }
+
+        /* Окна macOS */
+        .mac-window {
+            position: absolute;
+            background: rgba(18, 22, 32, 0.84);
+            backdrop-filter: blur(34px) saturate(180%);
+            -webkit-backdrop-filter: blur(34px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            box-shadow: 0 32px 95px rgba(0, 0, 0, 0.82), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.26s cubic-bezier(0.2, 0.85, 0.25, 1), opacity 0.22s ease, box-shadow 0.25s ease;
+        }
+
+        /* Обои рабочего стола macOS в стиле Dark Sonoma / Kiramachka */
+        .macos-wallpaper {
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(750px circle at 18% 22%, rgba(56, 189, 248, 0.14), transparent 55%),
+                radial-gradient(800px circle at 82% 72%, rgba(129, 140, 248, 0.14), transparent 55%),
+                radial-gradient(550px circle at 50% 45%, rgba(16, 185, 129, 0.06), transparent 60%),
+                linear-gradient(160deg, #04070f 0%, #091022 50%, #050811 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Холст с падающим бинарным кодом 011001010 на рабочем столе */
+        #binary-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+            pointer-events: none;
+        }
+
+        /* Окна macOS */
+        .mac-window {
+            position: absolute;
+            background: rgba(12, 17, 29, 0.82);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 30px 90px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.28s cubic-bezier(0.2, 0.85, 0.25, 1), opacity 0.24s ease, box-shadow 0.25s ease;
+        }
+
+        .mac-window.window-hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.92) translateY(24px);
+        }
+
+        .mac-window.window-minimized {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.45) translateY(340px);
+        }
+
+        .mac-window.window-maximized {
+            top: 32px !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: calc(100vh - 32px) !important;
+            border-radius: 0 !important;
+        }
+
+        /* Стеклянные висящие карточки внутри браузера */
+        .glass-card {
+            position: relative;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+            border-radius: 20px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+            animation: calmFloat 6.5s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        .glass-card:nth-child(2) { animation-delay: -2s; }
+        .glass-card:nth-child(3) { animation-delay: -4s; }
+
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.32);
+            box-shadow: 0 22px 55px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.09);
+        }
+
+        @keyframes calmFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Кнопки светофора macOS (Закрыть, Свернуть, Развернуть) */
+        .traffic-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: 700;
+            color: transparent;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+        .traffic-group:hover .traffic-btn {
+            color: rgba(0, 0, 0, 0.65);
+        }
+
+        /* Нижняя панель macOS Dock */
+        .mac-dock {
+            background: rgba(15, 23, 42, 0.58);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .dock-item {
+            transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+        }
+        .dock-item:hover {
+            transform: translateY(-10px) scale(1.16);
+        }
+
+        /* Лагающий глитч-эффект для текста "код не определён" (YouTube) */
+        .cyber-glitch {
+            position: relative;
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: #f1f5f9;
+            animation: glitchShake 2.4s infinite;
+        }
+
+        .cyber-glitch::before,
+        .cyber-glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .cyber-glitch::before {
+            color: #38bdf8;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+            animation: glitchTop 1.9s infinite linear alternate-reverse;
+            opacity: 0.9;
+        }
+
+        .cyber-glitch::after {
+            color: #f43f5e;
+            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+            animation: glitchBottom 1.5s infinite linear alternate-reverse;
+            opacity: 0.9;
+        }
+
+        @keyframes glitchShake {
+            0%, 80%, 100% { transform: translate(0, 0) skew(0deg); }
+            82% { transform: translate(-2px, 1px) skew(-5deg); }
+            85% { transform: translate(2px, -1px) skew(5deg); opacity: 0.65; }
+            88% { transform: translate(-1px, 0) skew(-3deg); }
+            91% { transform: translate(2px, 1px) skew(3deg); opacity: 0.45; }
+            94% { transform: translate(0, 0) skew(0deg); opacity: 1; }
+        }
+
+        @keyframes glitchTop {
+            0%, 70%, 100% { transform: translate(0, 0); }
+            78% { transform: translate(-3px, -1px); }
+            86% { transform: translate(3px, 1px); }
+            93% { transform: translate(-2px, 0); }
+        }
+
+        @keyframes glitchBottom {
+            0%, 68%, 100% { transform: translate(0, 0); }
+            76% { transform: translate(3px, 1px); }
+            84% { transform: translate(-3px, -1px); }
+            92% { transform: translate(2px, 0); }
+        }
+
+        /* Индикатор волн потери сигнала */
+        .signal-bar {
+            width: 4px;
+            border-radius: 999px;
+            background: #f59e0b;
+            animation: signalPulse 1.4s ease-in-out infinite;
+        }
+        .signal-bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+        .signal-bar:nth-child(2) { height: 14px; animation-delay: 0.2s; }
+        .signal-bar:nth-child(3) { height: 20px; animation-delay: 0.4s; opacity: 0.35; }
+        .signal-bar:nth-child(4) { height: 26px; animation-delay: 0.6s; opacity: 0.2; }
+
+        @keyframes signalPulse {
+            0%, 100% { opacity: 0.25; transform: scaleY(0.85); }
+            50% { opacity: 1; transform: scaleY(1.08); }
+        }
+
+        /* Кастомные скроллбары */
+        .custom-scroll::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.35);
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.25);
+            border-radius: 999px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(56, 189, 248, 0.45);
+        }
+    </style>
+</head>
+<body class="selection:bg-sky-500/30 selection:text-sky-200">
+
+    <!-- Фоновые обои macOS: Разбитый экран + падающие цифры 011001010 -->
+    <div class="macos-wallpaper"></div>
+    <canvas id="binary-canvas"></canvas>
+    <div class="lcd-damage-lines"></div>
+
+    <!-- Детализированная паутина трещин разбитого экрана на весь рабочий стол -->
+    <svg class="cracked-glass-overlay" viewBox="0 0 1920 1080" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <radialGradient id="impactGlow1" cx="74%" cy="34%" r="24%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.55)" />
+                <stop offset="15%" stop-color="rgba(56,189,248,0.28)" />
+                <stop offset="45%" stop-color="rgba(244,63,94,0.14)" />
+                <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+            </radialGradient>
+            <radialGradient id="impactGlow2" cx="24%" cy="68%" r="20%">
+                <stop offset="0%" stop-color="rgba(255,255,255,0.45)" />
+                <stop offset="22%" stop-color="rgba(168,85,247,0.24)" />
+                <stop offset="100%" stop-color="rgba(0,0,0,0)" />
+            </radialGradient>
+        </defs>
+
+        <!-- Свечение матрицы в местах удара -->
+        <circle cx="1420" cy="367" r="360" fill="url(#impactGlow1)" />
+        <circle cx="460" cy="734" r="290" fill="url(#impactGlow2)" />
+
+        <!-- Осколки и преломление стекла в эпицентре удара #1 (1420, 367) -->
+        <g stroke="rgba(255,255,255,0.75)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <!-- Главные магистральные лучи трещин от точки (1420, 367) -->
+            <path d="M1420 367 L1365 290 L1270 195 L1120 92 L980 0" stroke-width="2.1" />
+            <path d="M1420 367 L1455 260 L1510 140 L1565 0" stroke-width="1.8" />
+            <path d="M1420 367 L1540 310 L1695 235 L1840 160 L1920 115" stroke-width="2.3" />
+            <path d="M1420 367 L1580 385 L1750 412 L1920 450" stroke-width="1.9" />
+            <path d="M1420 367 L1535 460 L1680 590 L1835 745 L1920 840" stroke-width="2.4" />
+            <path d="M1420 367 L1460 510 L1510 695 L1575 910 L1620 1080" stroke-width="1.7" />
+            <path d="M1420 367 L1375 495 L1310 675 L1230 890 L1160 1080" stroke-width="2.2" />
+            <path d="M1420 367 L1275 435 L1085 525 L840 620 L460 734" stroke-width="2.6" stroke="rgba(224,242,254,0.88)" />
+            <path d="M1420 367 L1245 360 L1010 340 L730 305 L410 250 L0 175" stroke-width="2.0" />
+            <path d="M1420 367 L1310 245 L1185 110 L1070 0" stroke-width="1.3" />
+            <path d="M1420 367 L1495 215 L1620 85 L1710 0" stroke-width="1.4" />
+            <path d="M1420 367 L1610 350 L1810 320 L1920 295" stroke-width="1.3" />
+            <path d="M1420 367 L1410 540 L1385 780 L1350 1080" stroke-width="1.4" />
+        </g>
+
+        <!-- Концентрическая паутина осколков вокруг удара #1 (1420, 367) -->
+        <g stroke="rgba(186,230,253,0.52)" stroke-width="1.1" fill="rgba(255,255,255,0.015)">
+            <polygon points="1420,367 1438,348 1452,369 1435,386 1404,380 1398,354" fill="rgba(255,255,255,0.22)" />
+            <path d="M1398 338 L1435 330 L1462 350 L1466 382 L1440 404 L1405 402 L1382 378 Z" />
+            <path d="M1365 290 L1415 275 L1455 260 L1492 285 L1540 310 L1555 352 L1580 385 L1535 460 L1460 510 L1375 495 L1275 435 L1245 360 L1310 295 Z" />
+            <path d="M1270 195 L1380 170 L1510 140 L1610 185 L1695 235 L1720 330 L1750 412 L1680 590 L1510 695 L1310 675 L1085 525 L1010 340 L1150 240 Z" />
+            <!-- Вторичные ответвления трещин -->
+            <path d="M1275 435 L1210 495 L1145 585 L1090 710" />
+            <path d="M1535 460 L1625 495 L1745 520 L1920 555" />
+            <path d="M1365 290 L1255 280 L1120 265 L960 230" />
+            <path d="M1680 590 L1640 720 L1615 860" />
+            <path d="M1085 525 L985 455 L880 410 L730 305" />
+        </g>
+
+        <!-- Эпицентр удара #2 (460, 734) — нижняя левая часть экрана -->
+        <g stroke="rgba(255,255,255,0.72)" stroke-linecap="round" stroke-linejoin="round" fill="none">
+            <path d="M460 734 L340 665 L190 580 L0 475" stroke-width="2.1" />
+            <path d="M460 734 L310 745 L140 765 L0 790" stroke-width="1.9" />
+            <path d="M460 734 L365 835 L235 960 L110 1080" stroke-width="2.3" />
+            <path d="M460 734 L455 865 L440 990 L425 1080" stroke-width="1.8" />
+            <path d="M460 734 L565 845 L695 975 L810 1080" stroke-width="2.0" />
+            <path d="M460 734 L635 765 L845 810 L1080 875 L1350 960 L1620 1080" stroke-width="1.6" />
+            <path d="M460 734 L415 585 L360 410 L290 190 L225 0" stroke-width="1.9" />
+            <path d="M460 734 L555 605 L670 465 L730 305" stroke-width="1.5" />
+        </g>
+
+        <!-- Паутина вокруг удара #2 -->
+        <g stroke="rgba(216,180,254,0.48)" stroke-width="1.05" fill="rgba(255,255,255,0.015)">
+            <polygon points="460,734 474,719 488,738 470,752 444,746 442,722" fill="rgba(255,255,255,0.25)" />
+            <path d="M415 690 L468 682 L508 712 L502 762 L455 785 L408 755 Z" />
+            <path d="M340 665 L415 585 L555 605 L615 680 L635 765 L565 845 L455 865 L365 835 L310 745 Z" />
+            <path d="M190 580 L360 410 L520 435 L670 465 L750 610 L845 810 L695 975 L440 990 L235 960 L140 765 Z" />
+        </g>
+
+        <!-- Тонкие цветные хроматические блики на гранях сколов стекла -->
+        <g stroke="rgba(56,189,248,0.45)" stroke-width="0.9" fill="none">
+            <path d="M1422 369 L1277 437 L1087 527 L842 622 L462 736" />
+            <path d="M1422 365 L1542 308 L1697 233" />
+            <path d="M458 736 L363 837 L233 962" />
+        </g>
+        <g stroke="rgba(244,63,94,0.4)" stroke-width="0.8" fill="none">
+            <path d="M1418 365 L1273 433 L1083 523 L838 618 L458 732" />
+            <path d="M1418 369 L1533 462 L1678 592" />
+        </g>
+    </svg>
+
+    <!-- 1. ЭКРАН ВЗЛОМА / ЗАГРУЗКИ КОНСОЛИ ПРИ ВХОДЕ -->
+    <div id="intro-overlay" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#04070f]/95 backdrop-blur-2xl p-4 transition-all duration-700">
+        <div class="w-full max-w-xl rounded-2xl bg-slate-900/90 border border-white/15 shadow-[0_0_80px_rgba(56,189,248,0.16)] overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 bg-slate-950/90 border-b border-white/10">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-[#ff5f57]"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#febc2e]"></span>
+                    <span class="w-3 h-3 rounded-full bg-[#28c840]"></span>
+                </div>
+                <span class="font-mono text-xs text-slate-400">boot_breach.sh — Cupz1d macOS</span>
+                <button onclick="finishIntro()" class="text-xs font-mono text-sky-300 hover:text-white transition-colors px-2.5 py-1 rounded-lg bg-sky-500/15 hover:bg-sky-500/25 border border-sky-400/25">
+                    Пропустить [Space] ↵
+                </button>
+            </div>
+
+            <div class="p-6 font-mono text-xs sm:text-sm space-y-2.5 min-h-[240px] text-slate-300 flex flex-col justify-between">
+                <div id="terminal-lines" class="space-y-2"></div>
+
+                <div class="pt-4 space-y-2">
+                    <div class="flex justify-between text-[11px] text-slate-400">
+                        <span>DECRYPTING MACOS DESKTOP (011001010)...</span>
+                        <span id="boot-percent" class="text-sky-400">0%</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden border border-white/5">
+                        <div id="boot-progress-bar" class="h-full w-0 bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-300"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. РЕАЛИСТИЧНАЯ ВЕРХНЯЯ СТРОКА МЕНЮ MACOS (Menu Bar) -->
+    <header class="fixed top-0 left-0 right-0 h-7 z-50 bg-black/55 backdrop-blur-2xl border-b border-white/10 px-3.5 flex items-center justify-between text-[12px] text-slate-100">
+        <!-- Левая часть меню macOS -->
+        <div class="flex items-center gap-4">
+            <button onclick="openBrowserWith4SecDelay(false)" class="flex items-center text-white hover:opacity-80 transition-opacity" title="Apple Menu">
+                <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.33c.64-.78 1.08-1.86.96-2.94-.93.04-2.06.62-2.72 1.4-.58.68-1.1 1.79-.96 2.84 1.04.08 2.08-.52 2.72-1.3"/>
+                </svg>
+            </button>
+            <span id="menubar-active-app" class="font-semibold tracking-tight text-white">Finder</span>
+            <nav class="hidden sm:flex items-center gap-4 text-slate-200/90 font-normal">
+                <button onclick="openBrowserWith4SecDelay(true)" class="hover:text-white transition-colors">Файл</button>
+                <button onclick="openWindow('notepad-window', 'Заметки')" class="hover:text-white transition-colors">Правка</button>
+                <button onclick="openWindow('about-editor-window', 'TextEdit')" class="hover:text-white transition-colors">Вид</button>
+                <button onclick="openWindow('terminal-window', 'Терминал')" class="hover:text-white transition-colors">Окно</button>
+                <span class="text-slate-300/80 cursor-default">Справка</span>
+            </nav>
+        </div>
+
+        <!-- Правая часть меню macOS (Статусы, Wi-Fi, Батарея, Часы) -->
+        <div class="flex items-center gap-3 text-[12px] text-slate-100">
+            <button onclick="toggleMatrixBoost()" class="flex items-center gap-1 px-1.5 py-0.5 rounded hover:bg-white/10 text-sky-300 font-mono text-[11px] transition-colors" title="Скорость падающих цифр 011001010">
+                <span>0110:</span>
+                <span id="matrix-mode-label">Calm</span>
+            </button>
+
+            <button onclick="toggleSound()" class="px-1.5 py-0.5 rounded hover:bg-white/10 transition-colors" title="Звук системы">
+                <span id="sfx-icon">🔊</span>
+                <span id="sfx-label" class="sr-only">SFX</span>
+            </button>
+
+            <!-- Иконка Wi-Fi -->
+            <svg class="w-3.5 h-3.5 text-white/90 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/>
+            </svg>
+
+            <!-- Батарея macOS -->
+            <div class="hidden sm:flex items-center gap-1 text-[11px] text-white/90">
+                <span>100%</span>
+                <div class="w-5 h-2.5 rounded-[3px] border border-white/60 p-[1px] flex items-center">
+                    <div class="w-full h-full bg-emerald-400 rounded-[1px]"></div>
+                </div>
+            </div>
+
+            <div id="menubar-clock" class="text-white font-medium tracking-tight">
+                Ср, 00:00:00
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. УВЕДОМЛЕНИЕ MACOS СПРАВА ВВЕРХУ (О ТАЙМЕРЕ 4 СЕКУНДЫ ДЛЯ БРАУЗЕРА) -->
+    <div id="mac-notification" class="fixed top-10 right-4 z-40 w-80 sm:w-96 rounded-2xl bg-slate-900/85 backdrop-blur-2xl border border-white/15 shadow-2xl p-3.5 transition-all duration-500 opacity-0 translate-x-10 pointer-events-none">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-b from-sky-400 to-blue-600 flex items-center justify-center text-white shrink-0 shadow-md">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-white">Safari • Автозапуск</span>
+                    <span id="notif-timer-text" class="text-[11px] font-mono text-sky-400">4.0 сек</span>
+                </div>
+                <p class="text-xs text-slate-300 mt-0.5">
+                    Открытие сайта <span class="text-sky-300 font-mono">cupz1d.dev</span> по умолчанию...
+                </p>
+                <div class="w-full h-1.5 bg-slate-950 rounded-full overflow-hidden mt-2 border border-white/10">
+                    <div id="notif-progress-bar" class="h-full bg-gradient-to-r from-sky-400 to-blue-500 transition-all duration-100" style="width: 0%;"></div>
+                </div>
+                <div class="flex items-center justify-end gap-2 mt-2">
+                    <button onclick="openBrowserImmediately()" class="text-[11px] font-medium px-2.5 py-0.5 rounded-md bg-white/10 hover:bg-white/20 text-white transition-colors">
+                        Открыть сейчас
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. РАБОЧИЙ СТОЛ MACOS И ЯРЛЫКИ -->
+    <main id="desktop-area" class="relative z-10 w-full h-full pt-9 pb-24 px-4">
+
+        <!-- Ярлыки на рабочем столе macOS -->
+        <div class="grid grid-cols-2 sm:grid-cols-1 gap-3 w-fit">
+            <!-- Ярлык 1: Браузер Safari (Открывает сайт через 4 секунды) -->
+            <button onclick="openBrowserWith4SecDelay(true)" class="group flex flex-col items-center w-24 p-2 rounded-xl hover:bg-white/10 focus:bg-blue-500/25 border border-transparent hover:border-white/15 transition-all text-center">
+                <div class="w-14 h-14 rounded-[16px] bg-gradient-to-b from-[#38bdf8] via-[#2563eb] to-[#1d4ed8] shadow-xl group-hover:scale-105 transition-transform flex items-center justify-center text-white border border-white/25">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" stroke-width="1.6"/>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" stroke="white" stroke-width="1.2"/>
+                    </svg>
+                </div>
+                <span class="mt-1.5 text-[11px] font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)] px-1.5 py-0.5 rounded group-hover:bg-blue-600/80">
+                    Safari
+                </span>
+            </button>
+
+            <!-- Ярлык 2: Блокнот / Заметки macOS (Код сайта + Авторские права Copyright 2011 Cupz1d) -->
+            <button onclick="openWindow('notepad-window', 'Заметки')" class="group flex flex-col items-center w-24 p-2 rounded-xl hover:bg-white/10 focus:bg-blue-500/25 border border-transparent hover:border-white/15 transition-all text-center">
+                <div class="w-14 h-14 rounded-[16px] bg-white shadow-xl group-hover:scale-105 transition-transform flex flex-col overflow-hidden border border-white/30">
+                    <div class="h-4 w-full bg-gradient-to-r from-amber-400 to-yellow-500 border-b border-amber-600/30"></div>
+                    <div class="flex-1 p-2 flex flex-col justify-center gap-1 bg-[#fffbeb]">
+                        <div class="h-1 w-full bg-slate-400/70 rounded"></div>
+                        <div class="h-1 w-4/5 bg-slate-400/70 rounded"></div>
+                        <div class="h-1 w-3/5 bg-slate-400/70 rounded"></div>
+                    </div>
+                </div>
+                <span class="mt-1.5 text-[11px] font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)] px-1.5 py-0.5 rounded group-hover:bg-blue-600/80">
+                    Блокнот
+                </span>
+            </button>
+
+            <!-- Ярлык 3: Файл about.txt (Для блока "Обо мне") -->
+            <button onclick="openWindow('about-editor-window', 'TextEdit')" class="group flex flex-col items-center w-24 p-2 rounded-xl hover:bg-white/10 focus:bg-blue-500/25 border border-transparent hover:border-white/15 transition-all text-center">
+                <div class="w-14 h-14 rounded-[14px] bg-gradient-to-b from-slate-100 to-slate-300 shadow-xl group-hover:scale-105 transition-transform flex flex-col items-center justify-center text-slate-800 border border-white/40 relative">
+                    <span class="font-mono font-bold text-[10px] tracking-tighter bg-sky-600 text-white px-1.5 py-0.5 rounded mb-0.5">TXT</span>
+                    <span class="text-[9px] font-mono text-slate-600">about.txt</span>
+                </div>
+                <span class="mt-1.5 text-[11px] font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)] px-1.5 py-0.5 rounded group-hover:bg-blue-600/80">
+                    about.txt
+                </span>
+            </button>
+
+            <!-- Ярлык 4: Терминал macOS -->
+            <button onclick="openWindow('terminal-window', 'Терминал')" class="group flex flex-col items-center w-24 p-2 rounded-xl hover:bg-white/10 focus:bg-blue-500/25 border border-transparent hover:border-white/15 transition-all text-center">
+                <div class="w-14 h-14 rounded-[16px] bg-gradient-to-b from-slate-800 to-black border border-white/25 shadow-xl group-hover:scale-105 transition-transform flex items-center justify-center text-emerald-400 font-mono font-bold text-base">
+                    &gt;_
+                </div>
+                <span class="mt-1.5 text-[11px] font-medium text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.95)] px-1.5 py-0.5 rounded group-hover:bg-blue-600/80">
+                    Терминал
+                </span>
+            </button>
+        </div>
+
+        <!-- =========================================================
+             ОКНО 1: БРАУЗЕР SAFARI (САМ САЙТ ПО УМОЛЧАНИЮ ЧЕРЕЗ 4 СЕК)
+        ========================================================= -->
+        <section id="browser-window"
+                 onmousedown="bringToFront('browser-window', 'Safari')"
+                 class="mac-window window-hidden z-30"
+                 style="top: 42px; left: max(16px, calc(50vw - 470px)); width: min(940px, calc(100vw - 32px)); height: min(79vh, 730px);">
+
+            <!-- Чистая реалистичная шапка Safari (без желтых лишних кнопок) -->
+            <div class="window-drag-handle flex items-center justify-between px-4 py-2.5 bg-[#161b26]/95 border-b border-white/10 cursor-move shrink-0"
+                 data-window="browser-window">
+                <div class="flex items-center gap-4">
+                    <div class="traffic-group flex items-center gap-2">
+                        <button onclick="closeWindow('browser-window')" class="traffic-btn bg-[#ff5f57]" title="Закрыть">✕</button>
+                        <button onclick="minimizeWindow('browser-window')" class="traffic-btn bg-[#febc2e]" title="Свернуть">−</button>
+                        <button onclick="toggleMaximizeWindow('browser-window')" class="traffic-btn bg-[#28c840]" title="Развернуть">+</button>
+                    </div>
+
+                    <!-- Кнопки навигации Safari Назад/Вперед -->
+                    <div class="hidden sm:flex items-center gap-1 text-slate-400">
+                        <span class="p-1 rounded hover:bg-white/5 text-slate-500">‹</span>
+                        <span class="p-1 rounded hover:bg-white/5 text-slate-500">›</span>
+                    </div>
+                </div>
+
+                <!-- Центральная адресная строка Safari -->
+                <div class="flex items-center gap-2 flex-1 max-w-md mx-3 px-3 py-1 rounded-lg bg-black/45 border border-white/10 text-xs font-mono text-slate-200 shadow-inner">
+                    <svg class="w-3 h-3 text-emerald-400 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                    </svg>
+                    <span class="truncate mx-auto">cupz1d.dev</span>
+                    <button onclick="reloadSiteInsideBrowser()" class="text-slate-400 hover:text-white transition-colors" title="Обновить страницу (4с)">
+                        ↻
+                    </button>
+                </div>
+
+                <!-- Правая пустая зона для баланса заголовка Safari -->
+                <div class="w-12 hidden sm:flex justify-end text-slate-400">
+                    <svg class="w-4 h-4 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16m-7 6h7"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Экран 4-секундной загрузки при открытии браузера -->
+            <div id="browser-loading-splash" class="hidden flex-1 flex flex-col items-center justify-center p-8 text-center bg-[#060a14]/95">
+                <div class="w-16 h-16 rounded-2xl bg-sky-500/15 border border-sky-400/30 flex items-center justify-center text-sky-400 mb-4 animate-pulse">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+                    </svg>
+                </div>
+                <div class="font-mono text-sm text-white font-semibold">
+                    Подключение к узлу <span class="text-sky-400">https://cupz1d.dev</span>...
+                </div>
+                <p class="text-xs text-slate-400 font-mono mt-1">
+                    Сайт откроется по умолчанию через <span id="browser-splash-countdown" class="text-sky-300 font-bold">4.0</span> сек
+                </p>
+                <div class="w-64 h-1.5 bg-slate-900 rounded-full overflow-hidden mt-4 border border-white/10">
+                    <div id="browser-splash-bar" class="h-full bg-gradient-to-r from-sky-400 via-indigo-400 to-emerald-400 transition-all duration-100" style="width: 0%;"></div>
+                </div>
+                <button onclick="revealBrowserSiteNow()" class="mt-5 text-xs font-mono px-4 py-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-400/30 transition-all">
+                    Открыть сразу ↵
+                </button>
+            </div>
+
+            <!-- Внутренняя область браузера: САМ САЙТ СО ВСЕМИ 3 БЛОКАМИ -->
+            <div id="browser-site-viewport" class="custom-scroll flex-1 overflow-y-auto p-4 sm:p-7 space-y-6 selectable-text bg-gradient-to-b from-[#070b16]/75 to-[#050811]/90">
+
+                <!-- Шапка сайта внутри браузера (Чистая, без лишних кнопок) -->
+                <div class="glass-card p-5 sm:p-6">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-500/25 via-indigo-500/20 to-emerald-500/20 border border-white/15 flex items-center justify-center shadow-lg">
+                                    <span class="font-mono font-bold text-lg text-sky-300">&lt;/&gt;</span>
+                                </div>
+                                <span class="absolute -bottom-1 -right-1 px-1.5 py-0.5 text-[9px] font-mono bg-emerald-500 text-slate-950 font-bold rounded ring-2 ring-[#090d16]">
+                                    ON
+                                </span>
+                            </div>
+                            <div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h1 class="text-xl sm:text-2xl font-bold text-white">Cupz1d</h1>
+                                    <span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-sky-500/15 text-sky-300 border border-sky-400/25">
+                                        Developer & Gamer
+                                    </span>
+                                </div>
+                                <p class="text-xs sm:text-sm text-slate-400 mt-0.5">
+                                    Персональное портфолио • Все узлы синхронизированы
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- БЛОК 1: ОБО МНЕ (Берет данные из файла about.txt, пишет что пока потеряна связь — БЕЗ лишних кнопок снизу) -->
+                <div class="glass-card p-5 sm:p-7">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-3.5 mb-4 border-b border-white/10">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-sky-400 shadow-[0_0_10px_#38bdf8]"></span>
+                            <h2 class="text-base sm:text-lg font-semibold text-white">01 // Обо мне</h2>
+                        </div>
+                        <span class="font-mono text-xs text-sky-300 bg-sky-500/10 px-2.5 py-1 rounded-lg border border-sky-500/20">
+                            about.txt
+                        </span>
+                    </div>
+
+                    <div class="rounded-2xl bg-slate-950/75 border border-white/10 p-4 sm:p-5">
+                        <div class="flex items-center justify-between gap-3 mb-3 pb-2.5 border-b border-white/5">
+                            <div class="flex items-center gap-2 text-xs font-mono text-amber-300">
+                                <span class="relative flex h-2.5 w-2.5">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
+                                </span>
+                                <span id="about-status-title">ПОКА ЧТО ПОТЕРЯНА СВЯЗЬ С УЗЛОМ ДАННЫХ</span>
+                            </div>
+
+                            <div class="flex items-end gap-1 h-5" title="Индикатор связи">
+                                <span class="signal-bar"></span>
+                                <span class="signal-bar"></span>
+                                <span class="signal-bar"></span>
+                                <span class="signal-bar"></span>
+                            </div>
+                        </div>
+
+                        <div id="about-content" class="font-mono text-xs sm:text-sm text-slate-200 whitespace-pre-wrap leading-relaxed">Загрузка данных из файла about.txt...</div>
+                    </div>
+                </div>
+
+                <!-- БЛОК 2: ВО ЧТО ИГРАЮ (Главный профиль Steam + 2 виджета + Все игры) -->
+                <div class="glass-card p-5 sm:p-7">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-3.5 mb-5 border-b border-white/10">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-400 shadow-[0_0_10px_#818cf8]"></span>
+                            <h2 class="text-base sm:text-lg font-semibold text-white">02 // Во что играю</h2>
+                        </div>
+                        <span class="font-mono text-xs text-indigo-300 bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">
+                            STEAM_PROFILE
+                        </span>
+                    </div>
+
+                    <!-- Главная часть блока: Профиль Steam https://steamcommunity.com/id/Cupz1d/ -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-slate-900/95 via-indigo-950/40 to-slate-900/90 border border-indigo-400/30 mb-5">
+                        <div class="flex items-center gap-3.5">
+                            <div class="w-12 h-12 rounded-2xl bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-300 shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[11px] font-mono uppercase tracking-wider text-sky-400">Главная часть блока • Профиль</span>
+                                    <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">ONLINE</span>
+                                </div>
+                                <div class="text-base sm:text-lg font-bold text-white">Steam // Cupz1d</div>
+                                <div class="text-xs font-mono text-slate-400 truncate max-w-[220px] sm:max-w-sm">https://steamcommunity.com/id/Cupz1d/</div>
+                            </div>
+                        </div>
+
+                        <a href="https://steamcommunity.com/id/Cupz1d/" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs sm:text-sm transition-all shrink-0">
+                            <span>Открыть профиль Steam ↗</span>
+                        </a>
+                    </div>
+
+                    <!-- Внизу идут игры: 1 и 2 виджеты Steam -->
+                    <div class="space-y-4 mb-5">
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
+                                <span>1 — Игровой виджет #578080</span>
+                                <span class="text-sky-400">Steam Store Widget</span>
+                            </div>
+                            <div class="custom-scroll overflow-x-auto rounded-2xl bg-slate-950/80 border border-white/10 p-2 flex justify-center">
+                                <iframe src="https://store.steampowered.com/widget/578080/" frameborder="0" width="646" height="190" class="max-w-full rounded-lg"></iframe>
+                            </div>
+                        </div>
+
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-xs font-mono text-slate-400 px-1">
+                                <span>2 — Игровой виджет #1272080</span>
+                                <span class="text-indigo-400">Steam Store Widget</span>
+                            </div>
+                            <div class="custom-scroll overflow-x-auto rounded-2xl bg-slate-950/80 border border-white/10 p-2 flex justify-center">
+                                <iframe src="https://store.steampowered.com/widget/1272080/" frameborder="0" width="646" height="190" class="max-w-full rounded-lg"></iframe>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3 — Блок со всеми играми -->
+                    <a href="https://steamcommunity.com/id/Cupz1d/games/?tab=all" target="_blank" rel="noopener noreferrer"
+                       class="group flex items-center justify-between p-4 rounded-2xl bg-gradient-to-r from-indigo-500/15 via-sky-500/10 to-transparent hover:from-indigo-500/25 hover:via-sky-500/20 border border-white/10 hover:border-sky-400/40 transition-all">
+                        <div class="flex items-center gap-3">
+                            <span class="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center text-indigo-300 font-mono text-xs font-bold">
+                                ALL
+                            </span>
+                            <div>
+                                <div class="text-sm font-semibold text-white group-hover:text-sky-300 transition-colors">
+                                    3 — Блок со всеми играми Steam
+                                </div>
+                                <div class="text-xs text-slate-400 font-mono truncate max-w-[210px] sm:max-w-md">
+                                    https://steamcommunity.com/id/Cupz1d/games/?tab=all
+                                </div>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1.5 rounded-xl bg-white/10 group-hover:bg-sky-500 group-hover:text-slate-950 text-slate-200 font-mono text-xs transition-all">
+                            Все игры →
+                        </span>
+                    </a>
+                </div>
+
+                <!-- БЛОК 3: СВЯЗЬ (1-Телеграм, 2-Лагающий Ютуб, 3-ТикТок, 4-Скрытый телефон со звонком) -->
+                <div class="glass-card p-5 sm:p-7">
+                    <div class="flex flex-wrap items-center justify-between gap-2 pb-3.5 mb-5 border-b border-white/10">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399]"></span>
+                            <h2 class="text-base sm:text-lg font-semibold text-white">03 // Связь</h2>
+                        </div>
+                        <span class="font-mono text-xs text-emerald-300 bg-emerald-500/10 px-2.5 py-1 rounded-lg border border-emerald-500/20">
+                            CONTACTS
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <!-- 1. Телеграм -->
+                        <a href="https://t.me/cupz1dinfo" target="_blank" rel="noopener noreferrer"
+                           class="group p-4 rounded-2xl bg-slate-950/70 hover:bg-slate-900 border border-white/10 hover:border-sky-400/40 transition-all flex flex-col justify-between gap-2">
+                            <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+                                <span>1 — ТЕЛЕГРАМ</span>
+                                <span class="text-sky-400">Открыть ↗</span>
+                            </div>
+                            <div class="text-base font-semibold text-white group-hover:text-sky-300 font-mono">
+                                t.me/cupz1dinfo
+                            </div>
+                        </a>
+
+                        <!-- 2. Ютуб: код не определён (текст лагает) -->
+                        <div class="p-4 rounded-2xl bg-slate-950/70 border border-rose-500/25 flex flex-col justify-between gap-2">
+                            <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+                                <span class="flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                                    2 — YOUTUBE
+                                </span>
+                                <span class="text-rose-400 text-[10px] font-mono">LAG_STREAM</span>
+                            </div>
+                            <div class="text-base font-semibold">
+                                <span id="lagging-youtube-text" class="cyber-glitch" data-text="код не определён">код не определён</span>
+                            </div>
+                        </div>
+
+                        <!-- 3. ТикТок -->
+                        <a href="https://www.tiktok.com/@cupz1d1" target="_blank" rel="noopener noreferrer"
+                           class="group p-4 rounded-2xl bg-slate-950/70 hover:bg-slate-900 border border-white/10 hover:border-indigo-400/40 transition-all flex flex-col justify-between gap-2">
+                            <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+                                <span>3 — ТИКТОК</span>
+                                <span class="text-indigo-400">Профиль ↗</span>
+                            </div>
+                            <div class="text-base font-semibold text-white group-hover:text-indigo-300 font-mono truncate">
+                                https://www.tiktok.com/@cupz1d1
+                            </div>
+                        </a>
+
+                        <!-- 4. Номер телефона: скрыта половина, при нажатии сразу звонит -->
+                        <a href="tel:+79773288020"
+                           class="group p-4 rounded-2xl bg-slate-950/70 hover:bg-emerald-950/30 border border-white/10 hover:border-emerald-400/40 transition-all flex flex-col justify-between gap-2"
+                           title="Нажмите, чтобы сразу позвонить на +79773288020">
+                            <div class="flex items-center justify-between text-xs font-mono text-slate-400">
+                                <span>4 — НОМЕР ТЕЛЕФОНА</span>
+                                <span class="text-emerald-300 bg-emerald-500/15 px-2 py-0.5 rounded text-[10px] group-hover:bg-emerald-400 group-hover:text-slate-950 font-semibold transition-colors">
+                                    📞 Сразу звонит
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-1.5 font-mono text-base font-semibold text-white group-hover:text-emerald-300">
+                                <span>+7 977</span>
+                                <span class="px-1.5 py-0.5 rounded bg-white/10 text-sky-300 tracking-widest">•••-••</span>
+                                <span>-20</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             ОКНО 2: БЛОКНОТ MACOS (КОД САЙТА + COPYRIGHT INFORMATION)
+        ========================================================= -->
+        <section id="notepad-window"
+                 onmousedown="bringToFront('notepad-window', 'Блокнот')"
+                 class="mac-window window-hidden z-20"
+                 style="top: 72px; left: max(24px, calc(50vw - 410px)); width: min(840px, calc(100vw - 48px)); height: min(74vh, 650px);">
+
+            <!-- Шапка Блокнота -->
+            <div class="window-drag-handle flex items-center justify-between px-4 py-2.5 bg-slate-950/90 border-b border-white/10 cursor-move shrink-0"
+                 data-window="notepad-window">
+                <div class="traffic-group flex items-center gap-2">
+                    <button onclick="closeWindow('notepad-window')" class="traffic-btn bg-[#ff5f57]" title="Закрыть">✕</button>
+                    <button onclick="minimizeWindow('notepad-window')" class="traffic-btn bg-[#febc2e]" title="Свернуть">−</button>
+                    <button onclick="toggleMaximizeWindow('notepad-window')" class="traffic-btn bg-[#28c840]" title="Развернуть">+</button>
+                </div>
+
+                <div class="flex items-center gap-2 text-xs font-mono text-amber-300">
+                    <span>📝 Блокнот — source_code_cupz1d.html (Protected by Copyright)</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="copyNotepadCode()" id="copy-code-btn" class="text-xs font-mono px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-400/30 transition-colors">
+                        Копировать всё
+                    </button>
+                </div>
+            </div>
+
+            <!-- Панель вкладок внутри Блокнота -->
+            <div class="flex items-center justify-between px-4 py-2 bg-slate-900/80 border-b border-white/10 text-xs font-mono text-slate-400 shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-1 rounded-md bg-amber-500/15 text-amber-300 border border-amber-400/25">
+                        © COPYRIGHT + ИСХОДНЫЙ КОД САЙТА
+                    </span>
+                </div>
+                <span class="hidden sm:inline text-[11px] text-slate-500">Read-Only Intellectual Property • (C) 2011 Cupz1d</span>
+            </div>
+
+            <!-- Содержимое Блокнота: Авторские права + Полный код сайта -->
+            <div class="custom-scroll flex-1 overflow-auto p-4 sm:p-6 bg-[#070b14] font-mono text-xs sm:text-[13px] leading-relaxed selectable-text space-y-5">
+                <!-- Блок авторских прав -->
+                <div class="rounded-xl bg-amber-500/[0.07] border border-amber-400/30 p-4 text-amber-200 shadow-inner">
+<pre id="copyright-block-text" class="whitespace-pre-wrap font-mono text-xs sm:text-[13px] overflow-x-auto">=====================================================
+             COPYRIGHT INFORMATION
+=====================================================
+
+Copyright (C) 2011 Cupz1d. All rights reserved.
+
+The nickname, logo "Cupz1d" and all products, programs,
+materials, graphics, source codes and related files
+(hereinafter referred to as "the Products") are the
+intellectual property of their author, Cupz1d, and are
+protected by copyright law and international treaties,
+including the Berne Convention.
+
+1. The nickname "Cupz1d" is a registered pseudonym of the
+   author. Any use of this nickname by third parties for
+   impersonation or misattribution of authorship is
+   PROHIBITED.
+
+2. Free non-commercial use of the Products for personal
+   purposes is permitted, provided this notice is kept
+   intact and unchanged.
+
+3. Without the author's written permission it is forbidden:
+- to distribute the Products for a fee;
+  - to modify, decompile or alter the Products;
+  - to remove or alter this copyright notice;
+  - to claim the Products as one's own work.
+
+4. THE PRODUCTS ARE PROVIDED "AS IS" WITHOUT WARRANTY OF
+   ANY KIND. THE AUTHOR SHALL NOT BE LIABLE FOR ANY
+   DAMAGES ARISING OUT OF THE USE OR INABILITY TO USE
+   THE PRODUCTS.
+
+5. All trademarks mentioned in the Products belong to
+   their respective owners.
+
+=====================================================
+              (C) 2011 Cupz1d. All Rights Reserved.
+              Contact: [cupz1d@icloud.com / +79773288020 / t.me/cupz1dinfo
+=====================================================</pre>
+                </div>
+
+                <!-- Исходный код сайта ниже в Блокноте -->
+                <div class="rounded-xl bg-slate-950/90 border border-white/10 p-4 text-sky-200">
+                    <div class="text-[11px] text-slate-400 pb-2 mb-3 border-b border-white/10 flex justify-between">
+                        <span>// ИСХОДНЫЙ КОД САЙТА (index.html)</span>
+                        <span class="text-emerald-400">SYNTAX: HTML5 / JS</span>
+                    </div>
+                    <pre id="notepad-source-code" class="whitespace-pre-wrap font-mono text-xs text-slate-300 overflow-x-auto"></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             ОКНО 3: РЕДАКТОР ФАЙЛА about.txt (ДЛЯ БЛОКА "ОБО МНЕ")
+        ========================================================= -->
+        <section id="about-editor-window"
+                 onmousedown="bringToFront('about-editor-window', 'about.txt')"
+                 class="mac-window window-hidden z-20"
+                 style="top: 110px; left: max(36px, calc(50vw - 290px)); width: min(580px, calc(100vw - 48px)); height: 390px;">
+
+            <div class="window-drag-handle flex items-center justify-between px-4 py-2.5 bg-slate-950/90 border-b border-white/10 cursor-move shrink-0"
+                 data-window="about-editor-window">
+                <div class="traffic-group flex items-center gap-2">
+                    <button onclick="closeWindow('about-editor-window')" class="traffic-btn bg-[#ff5f57]">✕</button>
+                    <button onclick="minimizeWindow('about-editor-window')" class="traffic-btn bg-[#febc2e]">−</button>
+                    <button onclick="toggleMaximizeWindow('about-editor-window')" class="traffic-btn bg-[#28c840]">+</button>
+                </div>
+                <span class="font-mono text-xs text-emerald-300">about.txt — Источник блока «Обо мне»</span>
+                <button onclick="downloadAboutTxt()" class="text-xs font-mono px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                    ⬇ Скачать .txt
+                </button>
+            </div>
+
+            <div class="p-4 flex-1 flex flex-col gap-3 bg-slate-950/85">
+                <p class="text-xs text-slate-400">
+                    Измени текст ниже — сайт в браузере сразу подтянет новые данные для блока <strong>«01 // Обо мне»</strong>:
+                </p>
+                <textarea id="about-editor-area" class="w-full flex-1 rounded-xl bg-slate-900 border border-white/10 p-3 font-mono text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-sky-400 resize-none">[СТАТУС УЗЛА]: Пока что потеряна связь с основным сервером биографии...
+Пакеты данных (about.txt) находятся в режиме ожидания.
+Синхронизация прервана. Ожидание восстановления канала связи.</textarea>
+                <div class="flex justify-end gap-2">
+                    <button onclick="applyEditorText()" class="px-4 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-semibold text-xs transition-all">
+                        Сохранить и обновить сайт
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- =========================================================
+             ОКНО 4: ТЕРМИНАЛ MACOS
+        ========================================================= -->
+        <section id="terminal-window"
+                 onmousedown="bringToFront('terminal-window', 'Терминал')"
+                 class="mac-window window-hidden z-20"
+                 style="top: 130px; left: max(40px, calc(50vw - 310px)); width: min(620px, calc(100vw - 48px)); height: 380px;">
+
+            <div class="window-drag-handle flex items-center justify-between px-4 py-2.5 bg-slate-950/90 border-b border-white/10 cursor-move shrink-0"
+                 data-window="terminal-window">
+                <div class="traffic-group flex items-center gap-2">
+                    <button onclick="closeWindow('terminal-window')" class="traffic-btn bg-[#ff5f57]">✕</button>
+                    <button onclick="minimizeWindow('terminal-window')" class="traffic-btn bg-[#febc2e]">−</button>
+                    <button onclick="toggleMaximizeWindow('terminal-window')" class="traffic-btn bg-[#28c840]">+</button>
+                </div>
+                <span class="font-mono text-xs text-slate-400">cupz1d@macos: ~ (zsh)</span>
+                <span class="font-mono text-[10px] text-sky-400">011001010</span>
+            </div>
+
+            <div class="p-4 flex-1 flex flex-col justify-between bg-[#050811]/95 font-mono text-xs selectable-text overflow-hidden">
+                <div id="mini-cli-output" class="custom-scroll flex-1 overflow-y-auto space-y-1.5 text-slate-300 pr-1">
+                    <div class="text-slate-400">Cupz1d macOS Terminal [v14.5 Sonoma]</div>
+                    <div>Доступные команды: <button onclick="runCliCommand('help')" class="text-sky-400 hover:underline">help</button>, <button onclick="runCliCommand('browser')" class="text-sky-400 hover:underline">browser</button>, <button onclick="runCliCommand('notepad')" class="text-amber-300 hover:underline">notepad</button>, <button onclick="runCliCommand('ping')" class="text-emerald-400 hover:underline">ping</button>, <button onclick="runCliCommand('matrix')" class="text-indigo-300 hover:underline">matrix</button></div>
+                </div>
+
+                <form onsubmit="handleCliSubmit(event)" class="flex items-center gap-2 pt-3 border-t border-white/10 mt-2">
+                    <span class="text-sky-400 font-bold">cupz1d@mac:~$</span>
+                    <input id="mini-cli-input" type="text" placeholder="введите команду..." autocomplete="off"
+                           class="w-full bg-transparent text-white placeholder-slate-600 focus:outline-none">
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 5. РЕАЛИСТИЧНАЯ НИЖНЯЯ ПАНЕЛЬ MACOS DOCK -->
+    <div class="fixed bottom-3 left-1/2 -translate-x-1/2 z-50">
+        <div class="mac-dock px-3.5 py-2 rounded-[22px] flex items-center gap-3 sm:gap-3.5">
+
+            <!-- Иконка Dock 0: Finder -->
+            <div class="relative flex flex-col items-center">
+                <button onclick="openBrowserWith4SecDelay(false)" class="dock-item group relative w-12 h-12 rounded-[14px] bg-gradient-to-b from-sky-300 to-blue-600 flex items-center justify-center text-white shadow-lg border border-white/30" title="Finder">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <rect x="3" y="3" width="18" height="18" rx="4" />
+                        <path d="M9 9h.01M15 9h.01" stroke-width="2.5" stroke-linecap="round"/>
+                        <path d="M8 15c1.5 1.5 6.5 1.5 8 0" stroke-linecap="round"/>
+                        <path d="M12 3v9l-1.5 1.5" stroke-linecap="round"/>
+                    </svg>
+                    <span class="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 px-2.5 py-1 rounded-lg bg-slate-900/95 border border-white/15 text-[11px] font-medium text-white whitespace-nowrap shadow-xl">
+                        Finder
+                    </span>
+                </button>
+                <span class="w-1 h-1 rounded-full bg-white/80 mt-1"></span>
+            </div>
+
+            <!-- Иконка Dock 1: Safari (Открывает сайт по умолчанию через 4 секунды) -->
+            <div class="relative flex flex-col items-center">
+                <button onclick="openBrowserWith4SecDelay(true)" class="dock-item group relative w-12 h-12 rounded-[14px] bg-gradient-to-b from-[#38bdf8] via-[#2563eb] to-[#1d4ed8] flex items-center justify-center text-white shadow-lg border border-white/30" title="Safari (Сайт через 4 секунды)">
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" stroke-width="1.6"/>
+                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76" fill="currentColor" stroke="white" stroke-width="1.2"/>
+                    </svg>
+                    <span class="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 px-2.5 py-1 rounded-lg bg-slate-900/95 border border-white/15 text-[11px] font-medium text-white whitespace-nowrap shadow-xl">
+                        Safari
+                    </span>
+                </button>
+                <span id="dot-browser-window" class="w-1 h-1 rounded-full bg-white mt-1 transition-opacity opacity-0"></span>
+            </div>
+
+            <!-- Иконка Dock 2: Блокнот / Заметки macOS (Код сайта + Авторские права) -->
+            <div class="relative flex flex-col items-center">
+                <button onclick="openWindow('notepad-window', 'Заметки')" class="dock-item group relative w-12 h-12 rounded-[14px] bg-white flex flex-col overflow-hidden shadow-lg border border-white/30" title="Блокнот (Код сайта и Copyright)">
+                    <div class="h-3.5 w-full bg-gradient-to-r from-amber-400 to-yellow-500 border-b border-amber-600/30"></div>
+                    <div class="flex-1 p-1.5 flex flex-col justify-center gap-1 bg-[#fffbeb]">
+                        <div class="h-1 w-full bg-slate-400/80 rounded"></div>
+                        <div class="h-1 w-4/5 bg-slate-400/80 rounded"></div>
+                        <div class="h-1 w-3/5 bg-slate-400/80 rounded"></div>
+                    </div>
+                    <span class="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 left-1/2 -translate-x-1/2 px-2.5 py-1 rounded-lg bg-slate-900/95 border border-white/15 text-[11px] font-medium text-white whitespace-nowrap shadow-xl">
+                        Блокнот
+                    </span>
+                </button>
+                <span id="dot-notepad-window" class="w-1 h-1 rounded-full bg-white mt-1 transition-opacity opacity-0"></span>
+            </div>
+
+            <!-- Иконка Dock 3: Файл about.txt -->
+            <div class="relative flex flex-col items-center">
+                <button onclick="openWindow('about-editor-window', 'TextEdit')" class="dock-item group relative w-12 h-12 rounded-[14px] bg-gradient-to-b from-slate-100 to-slate-300 flex flex-col items-center justify-center text-slate-900 shadow-lg border border-white/30" title="about.txt">
+                    <span class="font-mono font-bold text-[10px] bg-sky-600 text-white px-1.5 py-0.5 rounded">TXT</span>
+                    <span class="text-[8px] font-mono text-slate-700 mt-0.5">about</span>
+                    <span class="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 px-2.5 py-1 rounded-lg bg-slate-900/95 border border-white/15 text-[11px] font-sans font-medium text-white whitespace-nowrap shadow-xl">
+                        about.txt
+                    </span>
+                </button>
+                <span id="dot-about-editor-window" class="w-1 h-1 rounded-full bg-white mt-1 transition-opacity opacity-0"></span>
+            </div>
+
+            <!-- Иконка Dock 4: Терминал -->
+            <div class="relative flex flex-col items-center">
+                <button onclick="openWindow('terminal-window', 'Терминал')" class="dock-item group relative w-12 h-12 rounded-[14px] bg-gradient-to-b from-slate-800 to-black border border-white/25 flex items-center justify-center text-emerald-400 font-mono font-bold text-sm shadow-lg" title="Терминал">
+                    &gt;_
+                    <span class="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 px-2.5 py-1 rounded-lg bg-slate-900/95 border border-white/15 text-[11px] font-sans font-medium text-white whitespace-nowrap shadow-xl">
+                        Терминал
+                    </span>
+                </button>
+                <span id="dot-terminal-window" class="w-1 h-1 rounded-full bg-white mt-1 transition-opacity opacity-0"></span>
+            </div>
+
+            <div class="h-8 w-[1px] bg-white/20 mx-0.5"></div>
+
+            <!-- Быстрая ссылка на Steam в Dock -->
+            <a href="https://steamcommunity.com/id/Cupz1d/" target="_blank" rel="noopener noreferrer"
+               class="dock-item group relative w-12 h-12 rounded-[14px] bg-gradient-to-b from-[#1e293b] to-[#0f172a] border border-sky-400/30 flex items-center justify-center text-sky-300 shadow-lg" title="Steam // Cupz1d">
+                <span class="font-mono text-[10px] font-bold">STEAM</span>
+                <span class="pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity absolute -top-9 px-2.5 py-1 rounded-lg bg-slate-900/95 border border-white/15 text-[11px] font-medium text-white whitespace-nowrap shadow-xl">
+                    Steam // Cupz1d ↗
+                </span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================================
+           0. ЗВУКОВОЙ ДВИЖОК (WebAudio Synth для кликов macOS)
+        ========================================================= */
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        function playBeep(freq = 540, duration = 0.035, type = 'sine', volume = 0.03) {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sfx-icon').textContent = soundEnabled ? '🔊' : '🔇';
+            document.getElementById('sfx-label').textContent = soundEnabled ? 'SFX' : 'MUTE';
+            if (soundEnabled) playBeep(680, 0.05, 'triangle', 0.04);
+        }
+
+        /* =========================================================
+           1. АНИМАЦИЯ КОНСОЛИ ВЗЛОМА ПРИ ЗАПУСКЕ -> СТАРТ MACOS
+        ========================================================= */
+        const terminalSteps = [
+            { text: "Инициализация ядра Cupz1d macOS Sonoma...", color: "text-slate-400", progress: 20 },
+            { text: "Подключение бинарного потока 011001010... [OK]", color: "text-sky-300", progress: 45 },
+            { text: "Проверка авторских прав Copyright (C) 2011 Cupz1d... [VERIFIED]", color: "text-amber-300", progress: 70 },
+            { text: "Синхронизация about.txt и виджетов Steam...", color: "text-indigo-300", progress: 90 },
+            { text: "Запуск рабочего стола macOS...", color: "text-emerald-300", progress: 100 }
+        ];
+
+        let stepIndex = 0;
+        let introDone = false;
+
+        function runTerminalIntro() {
+            if (introDone) return;
+            const container = document.getElementById('terminal-lines');
+            const bar = document.getElementById('boot-progress-bar');
+            const pct = document.getElementById('boot-percent');
+
+            if (stepIndex < terminalSteps.length) {
+                const current = terminalSteps[stepIndex];
+                const row = document.createElement('div');
+                row.className = "flex items-center gap-2 opacity-0 transition-opacity duration-300";
+                row.innerHTML = `<span class="text-slate-600">[0${stepIndex + 1}]</span> <span class="${current.color}">${current.text}</span>`;
+                container.appendChild(row);
+
+                bar.style.width = current.progress + '%';
+                pct.textContent = current.progress + '%';
+                playBeep(380 + stepIndex * 65, 0.03, 'sine', 0.02);
+
+                requestAnimationFrame(() => row.classList.remove('opacity-0'));
+                stepIndex++;
+                setTimeout(runTerminalIntro, 360);
+            } else {
+                setTimeout(finishIntro, 350);
+            }
+        }
+
+        function finishIntro() {
+            if (introDone) return;
+            introDone = true;
+            playBeep(760, 0.06, 'triangle', 0.04);
+
+            const overlay = document.getElementById('intro-overlay');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+
+            const canvas = document.getElementById('binary-canvas');
+            canvas.style.opacity = '1';
+
+            // Запускаем 4-секундный отсчет до автоматического открытия браузера с сайтом по умолчанию
+            startDesktop4SecAutoBrowser();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (!introDone && (e.code === 'Space' || e.code === 'Enter' || e.code === 'Escape')) {
+                e.preventDefault();
+                finishIntro();
+            }
+        });
+
+        /* =========================================================
+           2. ОТКРЫТИЕ САЙТА В БРАУЗЕРЕ ЧЕРЕЗ 4 СЕКУНДЫ ПО УМОЛЧАНИЮ
+        ========================================================= */
+        let desktopCountdownInterval = null;
+        let browserSplashInterval = null;
+
+        // Автозапуск через 4 секунды после появления рабочего стола
+        function startDesktop4SecAutoBrowser() {
+            const notif = document.getElementById('mac-notification');
+            const timerText = document.getElementById('notif-timer-text');
+            const bar = document.getElementById('notif-progress-bar');
+
+            notif.classList.remove('opacity-0', 'translate-x-10', 'pointer-events-none');
+
+            const duration = 4000; // ровно 4 секунды
+            const startTime = performance.now();
+
+            clearInterval(desktopCountdownInterval);
+            desktopCountdownInterval = setInterval(() => {
+                const elapsed = performance.now() - startTime;
+                const remaining = Math.max(0, (duration - elapsed) / 1000);
+                const percent = Math.min(100, (elapsed / duration) * 100);
+
+                timerText.textContent = remaining.toFixed(1) + ' сек';
+                bar.style.width = percent + '%';
+
+                if (elapsed >= duration) {
+                    clearInterval(desktopCountdownInterval);
+                    hideNotificationBanner();
+                    openBrowserImmediately();
+                }
+            }, 50);
+        }
+
+        function hideNotificationBanner() {
+            const notif = document.getElementById('mac-notification');
+            notif.classList.add('opacity-0', 'translate-x-10', 'pointer-events-none');
+        }
+
+        // Когда пользователь нажимает на иконку Браузера — открывается окно Браузера,
+        // и через 4 секунды внутри него по умолчанию открывается сам сайт
+        function openBrowserWith4SecDelay(useSplash4Sec = true) {
+            hideNotificationBanner();
+            clearInterval(desktopCountdownInterval);
+
+            openWindow('browser-window', 'Браузер Safari');
+
+            if (!useSplash4Sec) {
+                revealBrowserSiteNow();
+                return;
+            }
+
+            const splash = document.getElementById('browser-loading-splash');
+            const viewport = document.getElementById('browser-site-viewport');
+            const countdownEl = document.getElementById('browser-splash-countdown');
+            const barEl = document.getElementById('browser-splash-bar');
+
+            splash.classList.remove('hidden');
+            viewport.classList.add('hidden');
+
+            const duration = 4000; // 4 секунды
+            const start = performance.now();
+
+            clearInterval(browserSplashInterval);
+            browserSplashInterval = setInterval(() => {
+                const elapsed = performance.now() - start;
+                const rem = Math.max(0, (duration - elapsed) / 1000);
+                const pct = Math.min(100, (elapsed / duration) * 100);
+
+                countdownEl.textContent = rem.toFixed(1);
+                barEl.style.width = pct + '%';
+
+                if (elapsed >= duration) {
+                    clearInterval(browserSplashInterval);
+                    revealBrowserSiteNow();
+                }
+            }, 50);
+        }
+
+        function openBrowserImmediately() {
+            clearInterval(desktopCountdownInterval);
+            hideNotificationBanner();
+            openWindow('browser-window', 'Браузер Safari');
+            revealBrowserSiteNow();
+        }
+
+        function revealBrowserSiteNow() {
+            clearInterval(browserSplashInterval);
+            document.getElementById('browser-loading-splash').classList.add('hidden');
+            document.getElementById('browser-site-viewport').classList.remove('hidden');
+            playBeep(680, 0.05, 'triangle', 0.04);
+        }
+
+        function reloadSiteInsideBrowser() {
+            openBrowserWith4SecDelay(true);
+        }
+
+        /* =========================================================
+           3. УПРАВЛЕНИЕ ОКНАМИ MACOS (ОТКРЫТИЕ, СВОРАЧИВАНИЕ, ПЕРЕТАСКИВАНИЕ)
+        ========================================================= */
+        let topZIndex = 35;
+
+        function bringToFront(windowId, appTitle) {
+            topZIndex++;
+            const win = document.getElementById(windowId);
+            if (win) {
+                win.style.zIndex = topZIndex;
+            }
+            if (appTitle) {
+                document.getElementById('menubar-active-app').textContent = appTitle;
+            }
+        }
+
+        function openWindow(windowId, appTitle) {
+            playBeep(580, 0.04, 'sine', 0.03);
+            const win = document.getElementById(windowId);
+            if (!win) return;
+
+            win.classList.remove('window-hidden', 'window-minimized');
+            bringToFront(windowId, appTitle);
+
+            const dot = document.getElementById('dot-' + windowId);
+            if (dot) dot.classList.remove('opacity-0');
+        }
+
+        function closeWindow(windowId) {
+            playBeep(420, 0.04, 'sine', 0.03);
+            const win = document.getElementById(windowId);
+            if (!win) return;
+
+            win.classList.add('window-hidden');
+            win.classList.remove('window-maximized');
+
+            const dot = document.getElementById('dot-' + windowId);
+            if (dot) dot.classList.add('opacity-0');
+        }
+
+        function minimizeWindow(windowId) {
+            playBeep(480, 0.04, 'sine', 0.03);
+            const win = document.getElementById(windowId);
+            if (!win) return;
+            win.classList.add('window-minimized');
+        }
+
+        function toggleMaximizeWindow(windowId) {
+            playBeep(640, 0.04, 'triangle', 0.03);
+            const win = document.getElementById(windowId);
+            if (!win) return;
+            win.classList.toggle('window-maximized');
+            bringToFront(windowId);
+        }
+
+        // Перетаскивание окон мышкой и тачем за шапку
+        (function initDraggableWindows() {
+            let activeWindow = null;
+            let startX = 0, startY = 0;
+            let initialLeft = 0, initialTop = 0;
+
+            document.querySelectorAll('.window-drag-handle').forEach(handle => {
+                handle.addEventListener('mousedown', (e) => {
+                    if (e.target.closest('button') || e.target.closest('input')) return;
+                    const winId = handle.getAttribute('data-window');
+                    activeWindow = document.getElementById(winId);
+                    if (!activeWindow || activeWindow.classList.contains('window-maximized')) {
+                        activeWindow = null;
+                        return;
+                    }
+                    bringToFront(winId);
+                    const rect = activeWindow.getBoundingClientRect();
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    initialLeft = rect.left;
+                    initialTop = rect.top;
+                });
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!activeWindow) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                const newTop = Math.max(32, Math.min(window.innerHeight - 80, initialTop + dy));
+                const newLeft = Math.max(-activeWindow.offsetWidth + 120, Math.min(window.innerWidth - 120, initialLeft + dx));
+                activeWindow.style.top = newTop + 'px';
+                activeWindow.style.left = newLeft + 'px';
+            });
+
+            window.addEventListener('mouseup', () => {
+                activeWindow = null;
+            });
+        })();
+
+        /* =========================================================
+           4. ГЕНЕРАЦИЯ ИСХОДНОГО КОДА САЙТА В БЛОКНОТЕ С COPYRIGHT
+        ========================================================= */
+        function populateNotepadSourceCode() {
+            const codeEl = document.getElementById('notepad-source-code');
+            if (!codeEl) return;
+
+            const cleanSiteSource = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Cupz1d — Official Website</title>
+</head>
+<body>
+    <!-- БЛОК 1: ОБО МНЕ (данные подгружаются из файла about.txt) -->
+    <section id="about">
+        <h2>01 // Обо мне</h2>
+        <div id="about-content">Пока что потеряна связь с основным сервером...</div>
+    </section>
+
+    <!-- БЛОК 2: ВО ЧТО ИГРАЮ (Steam Профиль + Виджеты игр) -->
+    <section id="games">
+        <h2>02 // Во что играю</h2>
+        <a href="https://steamcommunity.com/id/Cupz1d/">Профиль Steam: Cupz1d</a>
+        <iframe src="https://store.steampowered.com/widget/578080/" frameborder="0" width="646" height="190"></iframe>
+        <iframe src="https://store.steampowered.com/widget/1272080/" frameborder="0" width="646" height="190"></iframe>
+        <a href="https://steamcommunity.com/id/Cupz1d/games/?tab=all">Все игры в Steam</a>
+    </section>
+
+    <!-- БЛОК 3: СВЯЗЬ -->
+    <section id="contacts">
+        <h2>03 // Связь</h2>
+        <a href="https://t.me/cupz1dinfo">Telegram: t.me/cupz1dinfo</a>
+        <span class="glitch">YouTube: код не определён</span>
+        <a href="https://www.tiktok.com/@cupz1d1">TikTok: @cupz1d1</a>
+        <a href="tel:+79773288020">Телефон: +7 977 •••-••-20 (Сразу звонит)</a>
+    </section>
+</body>
+</html>`;
+
+            codeEl.textContent = cleanSiteSource;
+        }
+
+        function copyNotepadCode() {
+            const copyrightText = document.getElementById('copyright-block-text').textContent;
+            const sourceText = document.getElementById('notepad-source-code').textContent;
+            const fullText = `<!--\n${copyrightText}\n-->\n\n${sourceText}`;
+
+            const tempArea = document.createElement('textarea');
+            tempArea.value = fullText;
+            document.body.appendChild(tempArea);
+            tempArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempArea);
+
+            const btn = document.getElementById('copy-code-btn');
+            btn.textContent = '✓ Скопировано!';
+            playBeep(840, 0.06, 'triangle', 0.05);
+            setTimeout(() => {
+                btn.textContent = 'Копировать всё';
+            }, 2000);
+        }
+
+        /* =========================================================
+           5. ЧТЕНИЕ ФАЙЛА about.txt ("ОБО МНЕ")
+        ========================================================= */
+        const defaultLostConnectionText = "[СТАТУС]: Пока что потеряна связь с основным сервером...\nНе удалось получить пакет биографии из файла about.txt.\nОжидание восстановления защищенного канала связи.";
+
+        async function loadAboutFile() {
+            const contentEl = document.getElementById('about-content');
+            const titleEl = document.getElementById('about-status-title');
+
+            try {
+                const response = await fetch('about.txt', { cache: 'no-store' });
+                if (!response.ok) throw new Error('Файл about.txt не найден');
+                const text = await response.text();
+                contentEl.textContent = text.trim() || defaultLostConnectionText;
+                titleEl.textContent = "ДАННЫЕ СИНХРОНИЗИРОВАНЫ ИЗ ФАЙЛА about.txt";
+            } catch (error) {
+                const editorArea = document.getElementById('about-editor-area');
+                contentEl.textContent = (editorArea && editorArea.value) ? editorArea.value : defaultLostConnectionText;
+                titleEl.textContent = "ПОКА ЧТО ПОТЕРЯНА СВЯЗЬ (ОЖИДАНИЕ about.txt)";
+            }
+        }
+
+        function applyEditorText() {
+            playBeep(740, 0.05);
+            const text = document.getElementById('about-editor-area').value;
+            document.getElementById('about-content').textContent = text;
+            document.getElementById('about-status-title').textContent = "ДАННЫЕ ОБНОВЛЕНЫ ИЗ about.txt";
+            closeWindow('about-editor-window');
+        }
+
+        function downloadAboutTxt() {
+            playBeep(820, 0.06);
+            const text = document.getElementById('about-editor-area').value;
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'about.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        /* =========================================================
+           6. КОМАНДЫ ТЕРМИНАЛА MACOS
+        ========================================================= */
+        function handleCliSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('mini-cli-input');
+            const cmd = input.value.trim().toLowerCase();
+            if (!cmd) return;
+            input.value = '';
+            runCliCommand(cmd);
+        }
+
+        function runCliCommand(cmd) {
+            playBeep(640, 0.04, 'sine', 0.04);
+            const out = document.getElementById('mini-cli-output');
+            const line = document.createElement('div');
+
+            if (cmd === 'help') {
+                line.innerHTML = `<span class="text-sky-400">> help:</span> Команды: <span class="text-white">browser</span>, <span class="text-white">notepad</span>, <span class="text-white">ping</span>, <span class="text-white">matrix</span>, <span class="text-white">clear</span>`;
+            } else if (cmd === 'browser') {
+                openBrowserWith4SecDelay(true);
+                line.innerHTML = `<span class="text-sky-300">> safari:</span> Запуск браузера (сайт откроется через 4 секунды)...`;
+            } else if (cmd === 'notepad') {
+                openWindow('notepad-window', 'Блокнот');
+                line.innerHTML = `<span class="text-amber-300">> notepad:</span> Открыт Блокнот с кодом сайта и Copyright (C) 2011 Cupz1d.`;
+            } else if (cmd === 'ping') {
+                line.innerHTML = `<span class="text-emerald-400">> pong!</span> Узел cupz1d.dev стабилен • Поток 011001010 активен.`;
+            } else if (cmd === 'matrix') {
+                toggleMatrixBoost();
+                line.innerHTML = `<span class="text-indigo-300">> matrix:</span> Переключена скорость падающих цифр 011001010.`;
+            } else if (cmd === 'clear') {
+                out.innerHTML = '';
+                return;
+            } else {
+                line.innerHTML = `<span class="text-rose-400">> zsh:</span> команда не найдена: ${cmd}. Введите <span class="text-sky-400">help</span>.`;
+            }
+
+            out.appendChild(line);
+            out.scrollTop = out.scrollHeight;
+        }
+
+        /* =========================================================
+           7. ЛАГАЮЩИЙ ЭФФЕКТ ДЛЯ ТЕКСТА "код не определён" (YOUTUBE)
+        ========================================================= */
+        const originalYoutubeText = "код не определён";
+        const glitchChars = "01#@%&$?!/_-=";
+        const ytEl = document.getElementById('lagging-youtube-text');
+
+        setInterval(() => {
+            if (ytEl && Math.random() > 0.5) {
+                let scrambled = "";
+                for (let i = 0; i < originalYoutubeText.length; i++) {
+                    if (originalYoutubeText[i] !== " " && Math.random() > 0.7) {
+                        scrambled += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+                    } else {
+                        scrambled += originalYoutubeText[i];
+                    }
+                }
+                ytEl.textContent = scrambled;
+                setTimeout(() => {
+                    ytEl.textContent = originalYoutubeText;
+                }, 130);
+            }
+        }, 850);
+
+        /* =========================================================
+           8. ФОН РАБОЧЕГО СТОЛА С ПАДАЮЩИМИ ЦИФРАМИ 011001010
+        ========================================================= */
+        let matrixBoost = false;
+        let mouseX = -9999, mouseY = -9999;
+
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function toggleMatrixBoost() {
+            matrixBoost = !matrixBoost;
+            document.getElementById('matrix-mode-label').textContent = matrixBoost ? 'Turbo' : 'Calm';
+            playBeep(matrixBoost ? 780 : 480, 0.05);
+        }
+
+        function initCalmBinaryBackground() {
+            const canvas = document.getElementById('binary-canvas');
+            const ctx = canvas.getContext('2d');
+
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+                initColumns();
+            });
+
+            const binaryStream = "011001010";
+            const fontSize = 15;
+            const columnSpacing = 28;
+            let columns = [];
+
+            function initColumns() {
+                const count = Math.floor(width / columnSpacing);
+                columns = [];
+                for (let i = 0; i < count; i++) {
+                    columns.push({
+                        baseX: i * columnSpacing + 10,
+                        x: i * columnSpacing + 10,
+                        y: Math.random() * height,
+                        speed: 0.38 + Math.random() * 0.5,
+                        charIndex: Math.floor(Math.random() * binaryStream.length),
+                        alpha: 0.07 + Math.random() * 0.14
+                    });
+                }
+            }
+
+            initColumns();
+
+            function renderBinary() {
+                ctx.fillStyle = "rgba(5, 8, 17, 0.22)";
+                ctx.fillRect(0, 0, width, height);
+                ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
+
+                for (let i = 0; i < columns.length; i++) {
+                    const col = columns[i];
+                    const char = binaryStream[col.charIndex];
+
+                    const dx = col.x - mouseX;
+                    const dy = col.y - mouseY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 120) {
+                        const factor = (120 - dist) / 120;
+                        ctx.fillStyle = `rgba(56, 189, 248, ${Math.min(0.85, col.alpha + factor * 0.6)})`;
+                        col.x = col.baseX + (dx / dist) * factor * 12;
+                    } else {
+                        ctx.fillStyle = matrixBoost
+                            ? `rgba(129, 140, 248, ${col.alpha + 0.12})`
+                            : `rgba(125, 211, 252, ${col.alpha})`;
+                        col.x += (col.baseX - col.x) * 0.1;
+                    }
+
+                    ctx.fillText(char, col.x, col.y);
+
+                    const mult = matrixBoost ? 4.0 : 1.9;
+                    col.y += col.speed * mult;
+
+                    if (Math.random() > 0.9) {
+                        col.charIndex = (col.charIndex + 1) % binaryStream.length;
+                    }
+                    if (col.y > height + 20) {
+                        col.y = -20;
+                    }
+                }
+                requestAnimationFrame(renderBinary);
+            }
+            renderBinary();
+        }
+
+        // Часы в верхней панели macOS
+        function updateClock() {
+            const now = new Date();
+            const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            const el = document.getElementById('menubar-clock');
+            if (el) {
+                el.textContent = `${days[now.getDay()]}, ${now.toLocaleTimeString('ru-RU')}`;
+            }
+        }
+        setInterval(updateClock, 1000);
+
+        window.onload = function () {
+            updateClock();
+            populateNotepadSourceCode();
+            runTerminalIntro();
+            loadAboutFile();
+            initCalmBinaryBackground();
+        };
+    </script>
+</body>
+</html>
